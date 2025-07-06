@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
     // Create provider and signer
     const network = process.env.NEXT_PUBLIC_NETWORK || 'testnet';
     const rpcUrl = NETWORK_CONFIG.RPC_URLS[network as keyof typeof NETWORK_CONFIG.RPC_URLS];
-    const provider = new ethers.providers.JsonRpcProvider(rpcUrl);
+    const provider = new ethers.JsonRpcProvider(rpcUrl);
     
     // Use the private key from environment variables
     if (!process.env.PRIVATE_KEY) {

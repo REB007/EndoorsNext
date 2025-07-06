@@ -1,5 +1,4 @@
-import { Web3Storage } from "web3.storage";
-import { keccak256, toUtf8Bytes } from "ethers/lib/utils";
+import { keccak256 } from "ethers";
 
 /**
  * ConnectionPolaroid schema
@@ -16,8 +15,8 @@ export interface ConnectionPolaroid {
   tags: string[];
 }
 
-// Initialize Web3.Storage client (ensure process.env.WEB3STORAGE_TOKEN is set)
-const web3Client = new Web3Storage({ token: process.env.WEB3STORAGE_TOKEN! });
+// IPFS gateway URL for uploads
+const IPFS_API_URL = process.env.NEXT_PUBLIC_IPFS_API_URL || 'https://ipfs.infura.io:5001/api/v0';
 
 /**
  * Encode a ConnectionPolaroid object into a base64 string for URL embedding
@@ -48,12 +47,28 @@ export function safeParsePolaroid(data: string): ConnectionPolaroid | null {
 }
 
 /**
- * Upload a File to IPFS via Web3.Storage and return an ipfs:// URI
+ * Upload a File to IPFS and return an ipfs:// URI
  */
 export async function uploadToIPFS(file: File): Promise<string> {
-  const cid = await web3Client.put([file]);
-  // Return path including original filename
-  return `ipfs://${cid}/${file.name}`;
+  try {
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    const response = await fetch(`${IPFS_API_URL}/add`, {
+      method: 'POST',
+      body: formData,
+    });
+    
+    if (!response.ok) {
+      throw new Error(`IPFS upload failed: ${response.statusText}`);
+    }
+    
+    const data = await response.json();
+    return `ipfs://${data.Hash}/${file.name}`;
+  } catch (error) {
+    console.error('Error uploading to IPFS:', error);
+    throw error;
+  }
 }
 
 /**
@@ -71,5 +86,5 @@ export function generatePolaroidId(
   to: string,
   timestamp: string
 ): string {
-  return keccak256(toUtf8Bytes(`${from}-${to}-${timestamp}`));
+  return keccak256(new TextEncoder().encode(`${from}-${to}-${timestamp}`));
 }
