@@ -60,10 +60,14 @@ export function createPrivacyEndorserSelfAppConfig(address: string, data: any = 
  * @returns Self verification URL
  */
 export function getProfilesVerificationLink(address: string, data: any = {}) {
-  // This is a placeholder - in a real implementation, you would use the Self SDK
-  // to generate the universal link
+  // Generate a proper Self Protocol universal link
   const config = createProfilesSelfAppConfig(address, data);
-  const baseUrl = "https://self.xyz/verify";
+  
+  // Self Protocol uses a specific format for their universal links
+  // Format: selfid://verify/{endpoint}?{params}
+  const baseUrl = "https://app.self.id/verify";
+  
+  // Create the query parameters
   const params = new URLSearchParams({
     appName: config.appName,
     scope: config.scope,
@@ -75,7 +79,16 @@ export function getProfilesVerificationLink(address: string, data: any = {}) {
     devMode: config.devMode ? 'true' : 'false',
   });
   
-  return `${baseUrl}?${params.toString()}`;
+  // Add any custom data from the data parameter
+  if (data) {
+    Object.entries(data).forEach(([key, value]) => {
+      if (key !== 'timestamp') { // timestamp is already included in the config
+        params.append(`data.${key}`, String(value));
+      }
+    });
+  }
+  
+  return `${baseUrl}/${config.endpoint}?${params.toString()}`;
 }
 
 /**
