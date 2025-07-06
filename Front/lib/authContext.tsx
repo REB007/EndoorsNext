@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { isUserVerified } from '../utils/selfApp';
-import { PRIVY_CONFIG } from './contracts';
+import { usePrivy, useWallets } from '@privy-io/react-auth';
+import { isUserVerified } from '../utils/selfVerification';
 
 // Define the shape of our authentication context
 interface AuthContextType {
@@ -27,107 +27,38 @@ export const useAuth = () => useContext(AuthContext);
 
 // Provider component that wraps the app and makes auth available
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
-  const [walletAddress, setWalletAddress] = useState<string | null>(null);
-  const [privyReady, setPrivyReady] = useState(false);
-  const [privyClient, setPrivyClient] = useState<any>(null);
-
-  // Initialize Privy client
+  
+  // Use Privy hooks directly
+  const { ready, authenticated, user, login, logout } = usePrivy();
+  const { wallets } = useWallets();
+  
+  // Get the first connected wallet address
+  const walletAddress = wallets && wallets.length > 0 ? wallets[0].address : null;
+  
+  // Check verification status whenever the wallet address changes
   useEffect(() => {
-    // Dynamic import to avoid SSR issues
-    const loadPrivy = async () => {
+    const checkVerification = async () => {
+      if (!walletAddress) {
+        setIsVerified(false);
+        return;
+      }
+      
       try {
-        // Import Privy SDK dynamically to avoid SSR issues
-        const { PrivyClient } = await import('@privy-io/react-auth');
-        
-        // Initialize Privy client with app ID from environment
-        const privyClient = new PrivyClient({
-          appId: PRIVY_CONFIG.APP_ID,
-          loginMethods: ['wallet', 'email'],
-          embeddedWallets: {
-            createOnLogin: 'users-without-wallets',
-          },
-        });
-        
-        setPrivyClient(privyClient);
-        setPrivyReady(true);
-        
-        // Check if user is already authenticated
-        const user = await privyClient.getUser();
-        if (user) {
-          setIsLoggedIn(true);
-          
-          // Get wallet address
-          const wallets = await privyClient.getWallets();
-          if (wallets.length > 0) {
-            const address = wallets[0].address;
-            setWalletAddress(address);
-            
-            // Check verification status
-            if (address) {
-              const verified = await isUserVerified(address);
-              setIsVerified(verified);
-            }
-          }
-        }
+        const verified = await isUserVerified(walletAddress);
+        setIsVerified(verified);
       } catch (error) {
-        console.error('Failed to load Privy:', error);
+        console.error('Verification check failed:', error);
+        setIsVerified(false);
       }
     };
-
-    // Only run in browser environment
-    if (typeof window !== 'undefined') {
-      loadPrivy();
-    }
-  }, []);
-
-
-
-  // Login function
-  const login = async () => {
-    if (!privyReady || !privyClient) return;
     
-    try {
-      // Use Privy login method
-      await privyClient.login();
-      setIsLoggedIn(true);
-      
-      // Get wallet address after login
-      const wallets = await privyClient.getWallets();
-      if (wallets.length > 0) {
-        const address = wallets[0].address;
-        setWalletAddress(address);
-        
-        // Check verification status
-        if (address) {
-          const verified = await isUserVerified(address);
-          setIsVerified(verified);
-        }
-      }
-    } catch (error) {
-      console.error('Login failed:', error);
+    if (authenticated && walletAddress) {
+      checkVerification();
     }
-  };
-
-  // Logout function
-  const logout = async () => {
-    if (!privyReady || !privyClient) return;
-    
-    try {
-      // Use Privy logout method
-      await privyClient.logout();
-      
-      // Reset state
-      setIsLoggedIn(false);
-      setIsVerified(false);
-      setWalletAddress(null);
-    } catch (error) {
-      console.error('Logout failed:', error);
-    }
-  };
-
-  // Check verification status
+  }, [authenticated, walletAddress]);
+  
+  // Check verification status function that can be called manually
   const checkVerification = async () => {
     if (!walletAddress) return false;
     
@@ -143,7 +74,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Create the value object that will be provided by the context
   const value = {
-    isLoggedIn,
+    isLoggedIn: authenticated,
     isVerified,
     walletAddress,
     login,

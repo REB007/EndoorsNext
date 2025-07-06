@@ -7,8 +7,8 @@ function namehash(name: string): string {
   if (name) {
     const labels = name.split('.');
     for (let i = labels.length - 1; i >= 0; i--) {
-      const labelHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(labels[i]));
-      node = ethers.utils.keccak256(ethers.utils.concat([node, labelHash].map(h => ethers.utils.arrayify(h))));
+      const labelHash = ethers.keccak256(ethers.toUtf8Bytes(labels[i]));
+      node = ethers.keccak256(ethers.concat([node, labelHash].map(h => ethers.getBytes(h))));
     }
   }
   return node;
@@ -91,7 +91,7 @@ export const resolveSubdomain = async (name: string): Promise<string> => {
     const { l2RegistryContract } = getContractAddresses();
     
     // Connect to provider
-    const provider = new ethers.providers.getDefaultProvider(
+    const provider = ethers.getDefaultProvider(
       process.env.NEXT_PUBLIC_NETWORK === 'mainnet' 
         ? 'https://forno.celo.org' 
         : 'https://alfajores-forno.celo-testnet.org'
@@ -109,10 +109,10 @@ export const resolveSubdomain = async (name: string): Promise<string> => {
     const label = nameParts[0];
     
     // Calculate the namehash
-    const labelHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(label));
+    const labelHash = ethers.keccak256(ethers.toUtf8Bytes(label));
     const rootNode = namehash(ENS_CONFIG.domain);
-    const node = ethers.utils.keccak256(
-      ethers.utils.concat([rootNode, labelHash])
+    const node = ethers.keccak256(
+      ethers.concat([rootNode, labelHash].map(h => ethers.getBytes(h)))
     );
     
     // Get the owner

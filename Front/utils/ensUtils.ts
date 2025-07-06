@@ -22,11 +22,11 @@ function namehash(name: string): string {
   if (name) {
     const labels = name.split('.');
     for (let i = labels.length - 1; i >= 0; i--) {
-      const labelHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(labels[i]));
-      node = ethers.utils.keccak256(
-        ethers.utils.concat([
-          ethers.utils.arrayify(node),
-          ethers.utils.arrayify(labelHash)
+      const labelHash = ethers.keccak256(ethers.toUtf8Bytes(labels[i]));
+      node = ethers.keccak256(
+        ethers.concat([
+          ethers.getBytes(node),
+          ethers.getBytes(labelHash)
         ])
       );
     }
@@ -41,7 +41,7 @@ function namehash(name: string): string {
 function getProvider() {
   const network = process.env.NEXT_PUBLIC_NETWORK || 'testnet';
   const rpcUrl = NETWORK_CONFIG.RPC_URLS[network as keyof typeof NETWORK_CONFIG.RPC_URLS];
-  return new ethers.providers.JsonRpcProvider(rpcUrl);
+  return new ethers.JsonRpcProvider(rpcUrl);
 }
 
 /**
@@ -78,13 +78,13 @@ export async function isSubdomainAvailable(subdomain: string): Promise<boolean> 
  * @param subdomain The subdomain to register (without the .endoors.eth part)
  * @param ownerAddress The address that will own the subdomain
  * @param signer An ethers signer with permission to register subdomains
- * @returns Promise<ethers.providers.TransactionResponse> The transaction response
+ * @returns Promise<ethers.TransactionResponse> The transaction response
  */
 export async function registerSubdomain(
   subdomain: string,
   ownerAddress: string,
   signer: ethers.Signer
-): Promise<ethers.providers.TransactionResponse> {
+): Promise<ethers.TransactionResponse> {
   // Format the full name
   const fullName = `${subdomain}.${ENS_CONFIG.domain}`;
   

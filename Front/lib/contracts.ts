@@ -54,3 +54,10 @@ export const PRIVY_CONFIG = {
     createOnLogin: 'users-without-wallets',
   },
 };
+
+// IPFS configuration using Infura
+export const IPFS_CONFIG = {
+  PROJECT_ID: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID || '',
+  PROJECT_SECRET: process.env.NEXT_PUBLIC_INFURA_PROJECT_SECRET || '',
+  GATEWAY: process.env.NEXT_PUBLIC_INFURA_IPFS_GATEWAY || 'https://ipfs.infura.io',
+};

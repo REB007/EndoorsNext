@@ -1,4 +1,5 @@
-import { SelfAppBuilder } from "@selfxyz/core";
+import { SelfAppBuilder } from "@selfxyz/qrcode";
+import { getUniversalLink } from "@selfxyz/core";
 import { getContractAddresses, SELF_APP_CONFIG } from "../lib/config";
 
 // Base64 encoded logo (replace with your actual logo)
@@ -17,7 +18,7 @@ export const createProfilesSelfApp = (address: string, data: any = {}) => {
     appName: SELF_APP_CONFIG.appName,
     scope: SELF_APP_CONFIG.scope,
     endpoint: profilesContract,
-    endpointType: SELF_APP_CONFIG.endpointType,
+    endpointType: SELF_APP_CONFIG.endpointType as any,
     logoBase64: logo,
     userId: address,
     userIdType: "hex",
@@ -41,7 +42,7 @@ export const createPrivacyEndorserSelfApp = (address: string, data: any = {}) =>
     appName: SELF_APP_CONFIG.appName,
     scope: SELF_APP_CONFIG.scope,
     endpoint: privacyEndorserContract,
-    endpointType: SELF_APP_CONFIG.endpointType,
+    endpointType: SELF_APP_CONFIG.endpointType as any,
     logoBase64: logo,
     userId: address,
     userIdType: "hex",
@@ -60,7 +61,7 @@ export const createPrivacyEndorserSelfApp = (address: string, data: any = {}) =>
  */
 export const getProfilesVerificationLink = (address: string, data: any = {}) => {
   const selfApp = createProfilesSelfApp(address, data);
-  return selfApp.getUniversalLink();
+  return (selfApp as any).getUniversalLink();
 };
 
 /**
@@ -71,7 +72,7 @@ export const getProfilesVerificationLink = (address: string, data: any = {}) => 
  */
 export const getPrivacyEndorserVerificationLink = (address: string, data: any = {}) => {
   const selfApp = createPrivacyEndorserSelfApp(address, data);
-  return selfApp.getUniversalLink();
+  return (selfApp as any).getUniversalLink();
 };
 
 /**
