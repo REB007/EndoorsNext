@@ -63,13 +63,13 @@ export function getProfilesVerificationLink(address: string, data: any = {}) {
   // Generate a proper Self Protocol universal link
   const config = createProfilesSelfAppConfig(address, data);
   
-  // Self Protocol now uses redirect.self.xyz with a sessionId
   // Create a unique session ID based on timestamp and user address
   const timestamp = Date.now();
   const sessionId = `${address.substring(2, 10)}-${timestamp}`;
   
-  // Base URL for the redirect
-  const baseUrl = "https://redirect.self.xyz";
+  // Use the direct Self app URI scheme for deep linking
+  // This format will directly open the Self app if installed
+  const baseUrl = "selfid://verify";
   
   // Create the query parameters
   const params = new URLSearchParams({
