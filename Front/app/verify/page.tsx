@@ -10,6 +10,7 @@ export default function VerifyPage() {
   const { isLoggedIn, walletAddress } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [verificationLink, setVerificationLink] = useState<string | null>(null);
+  const [debugMode, setDebugMode] = useState(false);
 
   // Generate verification link when wallet address is available
   useEffect(() => {
@@ -87,6 +88,19 @@ export default function VerifyPage() {
                   >
                     I've Completed Verification
                   </button>
+
+                  {/* Debug button for development/testing */}
+                  <div className="mt-8 pt-4 border-t border-gray-700">
+                    <button
+                      onClick={() => {
+                        console.log('Debug: Bypassing Self verification');
+                        handleContinue();
+                      }}
+                      className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-200 text-sm"
+                    >
+                      Debug: Skip Verification (Dev Only)
+                    </button>
+                  </div>
                 </div>
               </div>
             )}
