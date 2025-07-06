@@ -1,0 +1,82 @@
+[
+  {
+    "id": 1,
+    "handle": "alexdev",
+    "avatar": "https://xsgames.co/randomusers/avatar.php?g=male&seed=1"
+  },
+  {
+    "id": 2,
+    "handle": "sarah_ui",
+    "avatar": "https://xsgames.co/randomusers/avatar.php?g=female&seed=2"
+  },
+  {
+    "id": 3,
+    "handle": "mikecode",
+    "avatar": "https://xsgames.co/randomusers/avatar.php?g=male&seed=3"
+  },
+  {
+    "id": 4,
+    "handle": "jenny_tech",
+    "avatar": "https://xsgames.co/randomusers/avatar.php?g=female&seed=4"
+  },
+  {
+    "id": 5,
+    "handle": "davidops",
+    "avatar": "https://xsgames.co/randomusers/avatar.php?g=male&seed=5"
+  },
+  {
+    "id": 6,
+    "handle": "lisa_design",
+    "avatar": "https://xsgames.co/randomusers/avatar.php?g=female&seed=6"
+  },
+  {
+    "id": 7,
+    "handle": "tomrust",
+    "avatar": "https://xsgames.co/randomusers/avatar.php?g=male&seed=7"
+  },
+  {
+    "id": 8,
+    "handle": "anna_cloud",
+    "avatar": "https://xsgames.co/randomusers/avatar.php?g=female&seed=8"
+  },
+  {
+    "id": 9,
+    "handle": "chris_web",
+    "avatar": "https://xsgames.co/randomusers/avatar.php?g=male&seed=9"
+  },
+  {
+    "id": 10,
+    "handle": "maya_ai",
+    "avatar": "https://xsgames.co/randomusers/avatar.php?g=female&seed=10"
+  },
+  {
+    "id": 11,
+    "handle": "joe_mobile",
+    "avatar": "https://xsgames.co/randomusers/avatar.php?g=male&seed=11"
+  },
+  {
+    "id": 12,
+    "handle": "emma_data",
+    "avatar": "https://xsgames.co/randomusers/avatar.php?g=female&seed=12"
+  },
+  {
+    "id": 13,
+    "handle": "ryan_sec",
+    "avatar": "https://xsgames.co/randomusers/avatar.php?g=male&seed=13"
+  },
+  {
+    "id": 14,
+    "handle": "zoe_product",
+    "avatar": "https://xsgames.co/randomusers/avatar.php?g=female&seed=14"
+  },
+  {
+    "id": 15,
+    "handle": "kyle_backend",
+    "avatar": "https://xsgames.co/randomusers/avatar.php?g=male&seed=15"
+  },
+  {
+    "id": 16,
+    "handle": "ava_frontend",
+    "avatar": "https://xsgames.co/randomusers/avatar.php?g=female&seed=16"
+  }
+]

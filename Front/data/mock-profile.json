@@ -1,0 +1,254 @@
+{
+  "profile": {
+    "id": "0x1a2b3c4d5e6f7890abcdef1234567890abcdef12",
+    "handle": "techpro_dev",
+    "name": "Alex Thompson",
+    "bio": "Full-stack developer passionate about building scalable applications. Love working with modern tech stacks and contributing to open source. Always learning something new.",
+    "walletAddress": "0x742d35Cc6634C0532925a3b8D4C0532925a3b8D4",
+    "avatar": "https://xsgames.co/randomusers/avatar.php?g=male&seed=profile",
+    "socialLinks": [
+      {
+        "platform": "Github",
+        "url": "https://github.com/techpro_dev",
+        "verified": false
+      },
+      {
+        "platform": "Telegram",
+        "url": "https://t.me/techpro_dev",
+        "verified": false
+      },
+      {
+        "platform": "X",
+        "url": "https://x.com/techpro_dev",
+        "verified": false
+      },
+      {
+        "platform": "Farcaster",
+        "url": "https://farcaster.xyz/techpro_dev",
+        "verified": false
+      }
+    ],
+    "createdAt": "2024-01-15T10:30:00Z",
+    "lastActive": "2024-12-20T14:22:00Z"
+  },
+  "skills": [
+    {
+      "id": "skill_001",
+      "name": "Rust",
+      "category": "Programming Languages",
+      "userEndorsements": 127,
+      "expertEndorsements": 15,
+      "totalEndorsements": 142,
+      "isVerified": true,
+      "lastEndorsed": "2024-12-19T09:15:00Z"
+    },
+    {
+      "id": "skill_002",
+      "name": "UX Design",
+      "category": "Design",
+      "userEndorsements": 89,
+      "expertEndorsements": 12,
+      "totalEndorsements": 101,
+      "isVerified": true,
+      "lastEndorsed": "2024-12-18T16:45:00Z"
+    },
+    {
+      "id": "skill_003",
+      "name": "DevOps",
+      "category": "Infrastructure",
+      "userEndorsements": 156,
+      "expertEndorsements": 18,
+      "totalEndorsements": 174,
+      "isVerified": true,
+      "lastEndorsed": "2024-12-20T11:30:00Z"
+    },
+    {
+      "id": "skill_004",
+      "name": "Public Speaking",
+      "category": "Soft Skills",
+      "userEndorsements": 73,
+      "expertEndorsements": 8,
+      "totalEndorsements": 81,
+      "isVerified": false,
+      "lastEndorsed": "2024-12-17T13:20:00Z"
+    }
+  ],
+  "superEndorsedUsers": [
+    {
+      "id": "user_001",
+      "handle": "alexdev",
+      "name": "Alex Rivera",
+      "avatar": "https://xsgames.co/randomusers/avatar.php?g=male&seed=1",
+      "walletAddress": "0x1234567890abcdef1234567890abcdef12345678",
+      "endorsementCount": 45,
+      "skills": ["React", "TypeScript", "Node.js"],
+      "reputation": 892,
+      "isExpert": true
+    },
+    {
+      "id": "user_002",
+      "handle": "sarah_ui",
+      "name": "Sarah Chen",
+      "avatar": "https://xsgames.co/randomusers/avatar.php?g=female&seed=2",
+      "walletAddress": "0x2345678901bcdef12345678901bcdef123456789",
+      "endorsementCount": 38,
+      "skills": ["UI/UX", "Figma", "Design Systems"],
+      "reputation": 756,
+      "isExpert": true
+    },
+    {
+      "id": "user_003",
+      "handle": "mikecode",
+      "name": "Mike Johnson",
+      "avatar": "https://xsgames.co/randomusers/avatar.php?g=male&seed=3",
+      "walletAddress": "0x3456789012cdef123456789012cdef1234567890",
+      "endorsementCount": 52,
+      "skills": ["Python", "Machine Learning", "Data Science"],
+      "reputation": 1024,
+      "isExpert": true
+    },
+    {
+      "id": "user_004",
+      "handle": "jenny_tech",
+      "name": "Jennifer Wu",
+      "avatar": "https://xsgames.co/randomusers/avatar.php?g=female&seed=4",
+      "walletAddress": "0x456789013def123456789013def12345678901a",
+      "endorsementCount": 29,
+      "skills": ["Blockchain", "Solidity", "Web3"],
+      "reputation": 634,
+      "isExpert": false
+    },
+    {
+      "id": "user_005",
+      "handle": "davidops",
+      "name": "David Kim",
+      "avatar": "https://xsgames.co/randomusers/avatar.php?g=male&seed=5",
+      "walletAddress": "0x56789014ef123456789014ef123456789012ab",
+      "endorsementCount": 67,
+      "skills": ["DevOps", "Kubernetes", "AWS"],
+      "reputation": 1156,
+      "isExpert": true
+    },
+    {
+      "id": "user_006",
+      "handle": "lisa_design",
+      "name": "Lisa Martinez",
+      "avatar": "https://xsgames.co/randomusers/avatar.php?g=female&seed=6",
+      "walletAddress": "0x6789015f123456789015f123456789012abc3",
+      "endorsementCount": 41,
+      "skills": ["Graphic Design", "Branding", "Illustration"],
+      "reputation": 823,
+      "isExpert": true
+    },
+    {
+      "id": "user_007",
+      "handle": "tomrust",
+      "name": "Tom Anderson",
+      "avatar": "https://xsgames.co/randomusers/avatar.php?g=male&seed=7",
+      "walletAddress": "0x789016123456789016123456789012abcd4",
+      "endorsementCount": 73,
+      "skills": ["Rust", "Systems Programming", "Performance"],
+      "reputation": 1289,
+      "isExpert": true
+    },
+    {
+      "id": "user_008",
+      "handle": "anna_cloud",
+      "name": "Anna Petrov",
+      "avatar": "https://xsgames.co/randomusers/avatar.php?g=female&seed=8",
+      "walletAddress": "0x89017123456789017123456789012abcde5",
+      "endorsementCount": 35,
+      "skills": ["Cloud Architecture", "Azure", "Terraform"],
+      "reputation": 712,
+      "isExpert": false
+    },
+    {
+      "id": "user_009",
+      "handle": "chris_web",
+      "name": "Chris Taylor",
+      "avatar": "https://xsgames.co/randomusers/avatar.php?g=male&seed=9",
+      "walletAddress": "0x9018123456789018123456789012abcdef6",
+      "endorsementCount": 48,
+      "skills": ["Frontend", "Vue.js", "CSS"],
+      "reputation": 896,
+      "isExpert": true
+    },
+    {
+      "id": "user_010",
+      "handle": "maya_ai",
+      "name": "Maya Patel",
+      "avatar": "https://xsgames.co/randomusers/avatar.php?g=female&seed=10",
+      "walletAddress": "0xa019123456789019123456789012abcdef67",
+      "endorsementCount": 61,
+      "skills": ["AI/ML", "TensorFlow", "Computer Vision"],
+      "reputation": 1087,
+      "isExpert": true
+    },
+    {
+      "id": "user_011",
+      "handle": "joe_mobile",
+      "name": "Joe Wilson",
+      "avatar": "https://xsgames.co/randomusers/avatar.php?g=male&seed=11",
+      "walletAddress": "0xb01a123456789a123456789012abcdef678",
+      "endorsementCount": 33,
+      "skills": ["Mobile Dev", "React Native", "iOS"],
+      "reputation": 687,
+      "isExpert": false
+    },
+    {
+      "id": "user_012",
+      "handle": "emma_data",
+      "name": "Emma Davis",
+      "avatar": "https://xsgames.co/randomusers/avatar.php?g=female&seed=12",
+      "walletAddress": "0xc01b123456789b123456789012abcdef6789",
+      "endorsementCount": 56,
+      "skills": ["Data Engineering", "Apache Spark", "SQL"],
+      "reputation": 978,
+      "isExpert": true
+    },
+    {
+      "id": "user_013",
+      "handle": "ryan_sec",
+      "name": "Ryan Brown",
+      "avatar": "https://xsgames.co/randomusers/avatar.php?g=male&seed=13",
+      "walletAddress": "0xd01c123456789c123456789012abcdef678a",
+      "endorsementCount": 42,
+      "skills": ["Cybersecurity", "Penetration Testing", "OWASP"],
+      "reputation": 834,
+      "isExpert": true
+    },
+    {
+      "id": "user_014",
+      "handle": "zoe_product",
+      "name": "Zoe Garcia",
+      "avatar": "https://xsgames.co/randomusers/avatar.php?g=female&seed=14",
+      "walletAddress": "0xe01d123456789d123456789012abcdef678ab",
+      "endorsementCount": 39,
+      "skills": ["Product Management", "Agile", "Strategy"],
+      "reputation": 756,
+      "isExpert": false
+    },
+    {
+      "id": "user_015",
+      "handle": "kyle_backend",
+      "name": "Kyle Miller",
+      "avatar": "https://xsgames.co/randomusers/avatar.php?g=male&seed=15",
+      "walletAddress": "0xf01e123456789e123456789012abcdef678abc",
+      "endorsementCount": 64,
+      "skills": ["Backend", "Microservices", "Database Design"],
+      "reputation": 1134,
+      "isExpert": true
+    },
+    {
+      "id": "user_016",
+      "handle": "ava_frontend",
+      "name": "Ava Thompson",
+      "avatar": "https://xsgames.co/randomusers/avatar.php?g=female&seed=16",
+      "walletAddress": "0x101f123456789f123456789012abcdef678abcd",
+      "endorsementCount": 47,
+      "skills": ["Frontend", "Angular", "JavaScript"],
+      "reputation": 889,
+      "isExpert": true
+    }
+  ]
+}
