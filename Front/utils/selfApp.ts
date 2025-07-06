@@ -67,9 +67,8 @@ export function getProfilesVerificationLink(address: string, data: any = {}) {
   const timestamp = Date.now();
   const sessionId = `${address.substring(2, 10)}-${timestamp}`;
   
-  // Use the direct Self app URI scheme for deep linking
-  // This format will directly open the Self app if installed
-  const baseUrl = "selfid://verify";
+  // Use the web URL that works in browsers
+  const baseUrl = "https://verify.self.xyz";
   
   // Create the query parameters
   const params = new URLSearchParams({
