@@ -63,12 +63,17 @@ export function getProfilesVerificationLink(address: string, data: any = {}) {
   // Generate a proper Self Protocol universal link
   const config = createProfilesSelfAppConfig(address, data);
   
-  // Self Protocol uses a specific format for their universal links
-  // Format: selfid://verify/{endpoint}?{params}
-  const baseUrl = "https://app.self.id/verify";
+  // Self Protocol now uses redirect.self.xyz with a sessionId
+  // Create a unique session ID based on timestamp and user address
+  const timestamp = Date.now();
+  const sessionId = `${address.substring(2, 10)}-${timestamp}`;
+  
+  // Base URL for the redirect
+  const baseUrl = "https://redirect.self.xyz";
   
   // Create the query parameters
   const params = new URLSearchParams({
+    sessionId: sessionId,
     appName: config.appName,
     scope: config.scope,
     endpoint: config.endpoint,
@@ -88,7 +93,7 @@ export function getProfilesVerificationLink(address: string, data: any = {}) {
     });
   }
   
-  return `${baseUrl}/${config.endpoint}?${params.toString()}`;
+  return `${baseUrl}?${params.toString()}`;
 }
 
 /**
