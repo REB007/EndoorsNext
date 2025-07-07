@@ -85,24 +85,30 @@ export default function RegisterSubdomainPage() {
       
       if (!response.ok) {
         let errorMessage = 'Failed to register subdomain';
+        // Clone the response before reading its body
+        const responseClone = response.clone();
+        
         try {
           const errorData = await response.json();
           errorMessage = errorData.message || errorMessage;
         } catch (jsonError) {
-          console.error('Error parsing error response:', jsonError);
-          // Try to get text content if JSON parsing fails
-          const textContent = await response.text();
-          if (textContent) {
-            errorMessage = `Server error: ${textContent.substring(0, 100)}`;
+          console.error('Error parsing error response as JSON:', jsonError);
+          try {
+            // Use the cloned response to get text if JSON parsing fails
+            const textContent = await responseClone.text();
+            if (textContent) {
+              errorMessage = `Server error: ${textContent.substring(0, 100)}`;
+            }
+          } catch (textError) {
+            console.error('Error getting response text:', textError);
           }
         }
         throw new Error(errorMessage);
       }
       
       // Get the successful response
-      let responseData;
       try {
-        responseData = await response.json();
+        const responseData = await response.json();
         console.log('Registration successful:', responseData);
       } catch (jsonError) {
         console.warn('Could not parse success response as JSON, but continuing anyway');
