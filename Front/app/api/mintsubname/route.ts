@@ -41,12 +41,39 @@ export async function POST(request: NextRequest) {
     }
     
     // Check if the subdomain is available
-    const available = await isSubdomainAvailable(name);
+    let available = false;
+    try {
+      available = await isSubdomainAvailable(name);
+    } catch (error) {
+      console.error('Error checking subdomain availability:', error);
+      // In development mode, assume it's available
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Development mode: Assuming subdomain is available despite error');
+        available = true;
+      } else {
+        return NextResponse.json(
+          { message: `Error checking subdomain availability: ${error instanceof Error ? error.message : 'Unknown error'}` },
+          { status: 500 }
+        );
+      }
+    }
+    
     if (!available) {
       return NextResponse.json(
         { message: 'This subdomain is already taken' },
         { status: 400 }
       );
+    }
+    
+    // Development mode shortcut - skip blockchain interaction
+    if (process.env.NODE_ENV === 'development' && process.env.MOCK_REGISTRATION === 'true') {
+      console.log('Development mode with MOCK_REGISTRATION: Skipping blockchain interaction');
+      return NextResponse.json({
+        message: 'Subdomain registered successfully (mock)',
+        name,
+        address,
+        transactionHash: '0x' + '0'.repeat(64), // Mock transaction hash
+      });
     }
     
     // Get contract address
@@ -84,8 +111,18 @@ export async function POST(request: NextRequest) {
   } catch (error: any) {
     console.error('Error registering subdomain:', error);
     
+    // Ensure we have a valid error message
+    let errorMessage = 'Failed to register subdomain';
+    if (error) {
+      if (typeof error.message === 'string') {
+        errorMessage += `: ${error.message}`;
+      } else if (typeof error.toString === 'function') {
+        errorMessage += `: ${error.toString()}`;
+      }
+    }
+    
     return NextResponse.json(
-      { message: `Failed to register subdomain: ${error.message}` },
+      { message: errorMessage },
       { status: 500 }
     );
   }

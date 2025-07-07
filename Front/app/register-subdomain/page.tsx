@@ -84,8 +84,28 @@ export default function RegisterSubdomainPage() {
       });
       
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to register subdomain');
+        let errorMessage = 'Failed to register subdomain';
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.message || errorMessage;
+        } catch (jsonError) {
+          console.error('Error parsing error response:', jsonError);
+          // Try to get text content if JSON parsing fails
+          const textContent = await response.text();
+          if (textContent) {
+            errorMessage = `Server error: ${textContent.substring(0, 100)}`;
+          }
+        }
+        throw new Error(errorMessage);
+      }
+      
+      // Get the successful response
+      let responseData;
+      try {
+        responseData = await response.json();
+        console.log('Registration successful:', responseData);
+      } catch (jsonError) {
+        console.warn('Could not parse success response as JSON, but continuing anyway');
       }
       
       // Redirect to the profile page
