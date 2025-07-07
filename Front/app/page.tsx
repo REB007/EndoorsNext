@@ -47,11 +47,12 @@ export default function HomePage() {
       <div className="absolute inset-0 flex items-center justify-center">
         <button
           onClick={handleLogoClick}
-          className={`group transition-all duration-500 hover:scale-105 ${
+          className={`group transition-all duration-500 hover:scale-105 focus:outline-none focus:ring-0 ${
             isShaking ? 'animate-shake' : ''
           }`}
           style={{
-            transform: `scale(${getLogoScale()})`
+            transform: `scale(${getLogoScale()})`,
+            outline: 'none'
           }}
         >
           <img

@@ -12,7 +12,16 @@ const L2RegistrarABI = [
 export async function POST(request: NextRequest) {
   try {
     // Parse request body
-    const body = await request.json();
+    let body;
+    try {
+      body = await request.json();
+    } catch (error) {
+      return NextResponse.json(
+        { message: 'Invalid JSON in request body' },
+        { status: 400 }
+      );
+    }
+    
     const { name, address } = body;
     
     // Validate inputs

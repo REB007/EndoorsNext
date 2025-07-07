@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { isSubdomainAvailable, formatSubdomain } from '@/utils/ensUtils';
 import { ENS_CONFIG } from '@/lib/contracts';
 import { useAuth } from '@/lib/authContext';
+import { AppContainer } from '@/components/ui/app-container';
 
 export default function RegisterSubdomainPage() {
   const router = useRouter();
@@ -87,114 +88,115 @@ export default function RegisterSubdomainPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black text-white flex flex-col items-center justify-center p-4">
-      <div className="w-full max-w-md bg-gray-800 rounded-xl shadow-lg p-8">
-        <div className="flex justify-center mb-6">
-          <img
-            src="/endoors_transparent2.png"
-            alt="Endoors"
-            className="h-16 w-auto"
-          />
+    <AppContainer>
+      <h1 className="text-2xl font-bold text-center mb-6">
+        Choose Your Subdomain
+      </h1>
+      
+      {isLoading ? (
+        <div className="flex justify-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-purple-500"></div>
         </div>
-        
-        <h1 className="text-2xl font-bold text-center mb-6">
-          Choose Your Subdomain
-        </h1>
-        
-        {isLoading ? (
-          <div className="flex justify-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-purple-500"></div>
-          </div>
-        ) : (
-          <>
-            {walletAddress && (
-              <div>
-                <p className="mb-4 text-center">
-                  Choose a unique name for your {ENS_CONFIG.domain} subdomain.
-                </p>
-                
-                <div className="flex items-center mb-6">
-                  <input
-                    type="text"
-                    value={subdomain}
-                    onChange={handleSubdomainChange}
-                    placeholder="yourname"
-                    className="flex-grow bg-gray-700 text-white px-4 py-3 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-                  />
-                  <div className="bg-gray-600 px-4 py-3 rounded-r-lg">
-                    .{ENS_CONFIG.domain}
-                  </div>
-                </div>
-                
-                {error && (
-                  <p className="text-red-400 text-sm mb-4">{error}</p>
-                )}
-                
-                {isAvailable === true && (
-                  <p className="text-green-400 text-sm mb-4">
-                    ✓ {formatSubdomain(subdomain)} is available!
-                  </p>
-                )}
-                
-                <div className="space-y-4">
-                  <button
-                    onClick={checkAvailability}
-                    disabled={isChecking || !subdomain}
-                    className={`w-full ${
-                      isChecking || !subdomain
-                        ? 'bg-gray-600 cursor-not-allowed'
-                        : 'bg-purple-600 hover:bg-purple-700'
-                    } text-white font-bold py-3 px-4 rounded-lg transition-colors duration-200`}
-                  >
-                    {isChecking ? (
-                      <span className="flex items-center justify-center">
-                        <span className="animate-spin h-4 w-4 border-t-2 border-b-2 border-white rounded-full mr-2"></span>
-                        Checking...
-                      </span>
-                    ) : (
-                      'Check Availability'
-                    )}
-                  </button>
-                  
-                  <button
-                    onClick={handleRegister}
-                    disabled={!isAvailable || isLoading}
-                    className={`w-full ${
-                      !isAvailable || isLoading
-                        ? 'bg-gray-600 cursor-not-allowed'
-                        : 'bg-green-600 hover:bg-green-700'
-                    } text-white font-bold py-3 px-4 rounded-lg transition-colors duration-200`}
-                  >
-                    {isLoading ? (
-                      <span className="flex items-center justify-center">
-                        <span className="animate-spin h-4 w-4 border-t-2 border-b-2 border-white rounded-full mr-2"></span>
-                        Registering...
-                      </span>
-                    ) : (
-                      'Register Subdomain'
-                    )}
-                  </button>
+      ) : (
+        <>
+          {walletAddress && (
+            <div>
+              <p className="mb-4 text-center">
+                Choose a unique name for your {ENS_CONFIG.domain} subdomain.
+              </p>
+              
+              <div className="flex items-center mb-6 bg-gray-700/40 backdrop-blur-sm rounded-lg overflow-hidden shadow-inner">
+                <input
+                  type="text"
+                  value={subdomain}
+                  onChange={handleSubdomainChange}
+                  placeholder="yourname"
+                  className="flex-grow min-w-0 bg-transparent text-white px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500 border-none"
+                />
+                <div className="bg-gray-600/80 backdrop-blur-sm px-4 py-3 text-sm md:text-base whitespace-nowrap">
+                  .{ENS_CONFIG.domain}
                 </div>
               </div>
-            )}
-            
-            {!walletAddress && (
-              <div className="text-center">
-                <p className="text-red-400 mb-4">
-                  No wallet address found. Please connect your wallet first.
-                </p>
+              
+              {error && (
+                <div className="flex items-center text-red-400 text-sm mb-4 bg-red-400/10 p-2 rounded-lg">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                  </svg>
+                  {error}
+                </div>
+              )}
+              
+              {isAvailable === true && (
+                <div className="flex items-center text-green-400 text-sm mb-4 bg-green-400/10 p-2 rounded-lg">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  {formatSubdomain(subdomain)} is available!
+                </div>
+              )}
+              
+              <div className="space-y-4">
+                <button
+                  onClick={checkAvailability}
+                  disabled={isChecking || !subdomain}
+                  className={`w-full ${
+                    isChecking || !subdomain
+                      ? 'bg-gray-600/80 cursor-not-allowed'
+                      : 'bg-purple-600 hover:bg-purple-700'
+                  } text-white font-bold py-3 px-4 rounded-lg transition-colors duration-200 shadow-lg`}
+                >
+                  {isChecking ? (
+                    <span className="flex items-center justify-center">
+                      <span className="animate-spin h-4 w-4 border-t-2 border-b-2 border-white rounded-full mr-2"></span>
+                      Checking...
+                    </span>
+                  ) : (
+                    'Check Availability'
+                  )}
+                </button>
                 
                 <button
-                  onClick={() => router.push('/login')}
-                  className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded-lg transition-colors duration-200"
+                  onClick={handleRegister}
+                  disabled={!isAvailable || isLoading}
+                  className={`w-full ${
+                    !isAvailable || isLoading
+                      ? 'bg-gray-600/80 cursor-not-allowed'
+                      : 'bg-green-600 hover:bg-green-700'
+                  } text-white font-bold py-3 px-4 rounded-lg transition-colors duration-200 shadow-lg`}
                 >
-                  Back to Login
+                  {isLoading ? (
+                    <span className="flex items-center justify-center">
+                      <span className="animate-spin h-4 w-4 border-t-2 border-b-2 border-white rounded-full mr-2"></span>
+                      Registering...
+                    </span>
+                  ) : (
+                    'Register Subdomain'
+                  )}
                 </button>
               </div>
-            )}
-          </>
-        )}
-      </div>
-    </div>
+            </div>
+          )}
+          
+          {!walletAddress && (
+            <div className="text-center">
+              <div className="flex items-center justify-center mb-4 text-red-400 bg-red-400/10 p-3 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                </svg>
+                <span>No wallet address found. Please connect your wallet first.</span>
+              </div>
+              
+              <button
+                onClick={() => router.push('/login')}
+                className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded-lg transition-colors duration-200 shadow-lg"
+              >
+                Back to Login
+              </button>
+            </div>
+          )}
+        </>
+      )}
+    </AppContainer>
   );
 }

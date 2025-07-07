@@ -3,8 +3,8 @@ import { CONTRACT_ADDRESSES, NETWORK_CONFIG, ENS_CONFIG } from '../lib/contracts
 
 // ABI snippets for the contracts
 const L2RegistrarABI = [
-  "function register(string calldata label, address owner) external returns (uint256)",
-  "function available(string calldata label) external view returns (bool)",
+  "function register(bytes32 node, address owner) external returns (bool)",
+  "function available(bytes32 node) external view returns (bool)",
 ];
 
 const L2RegistryABI = [
@@ -57,10 +57,15 @@ export async function isSubdomainAvailable(subdomain: string): Promise<boolean> 
       L2RegistrarABI,
       provider
     );
+
+    // Format the full name
+    const fullName = `${subdomain}.${ENS_CONFIG.domain}`;
     
-    // Pass the subdomain name directly to the available function
-    // The contract expects just the label part, not the full name or namehash
-    const available = await registrar.available(subdomain);
+    // Calculate the namehash
+    const node = namehash(fullName);
+    
+    // Check availability
+    const available = await registrar.available(node);
     return available;
   } catch (error) {
     console.error("Error checking subdomain availability:", error);
@@ -80,6 +85,12 @@ export async function registerSubdomain(
   ownerAddress: string,
   signer: ethers.Signer
 ): Promise<ethers.TransactionResponse> {
+  // Format the full name
+  const fullName = `${subdomain}.${ENS_CONFIG.domain}`;
+  
+  // Calculate the namehash
+  const node = namehash(fullName);
+  
   // Create contract instance
   const registrar = new ethers.Contract(
     CONTRACT_ADDRESSES.L2_REGISTRAR_CONTRACT,
@@ -87,8 +98,8 @@ export async function registerSubdomain(
     signer
   );
   
-  // Register the subdomain - pass the label directly
-  return await registrar.register(subdomain, ownerAddress);
+  // Register the subdomain
+  return await registrar.register(node, ownerAddress);
 }
 
 /**
