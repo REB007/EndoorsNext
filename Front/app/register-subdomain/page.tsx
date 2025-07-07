@@ -44,10 +44,20 @@ export default function RegisterSubdomainPage() {
       
       if (!available) {
         setError(`${formatSubdomain(subdomain)} is already taken`);
+      } else {
+        setError(null); // Clear any previous errors
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error checking subdomain availability:', error);
-      setError('Error checking availability. Please try again.');
+      // In development mode, we'll assume the subdomain is available despite errors
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Development mode: Assuming subdomain is available despite error');
+        setIsAvailable(true);
+        setError(null);
+      } else {
+        setError(`Error checking availability: ${error.message || 'Please try again'}`);
+        setIsAvailable(false);
+      }
     } finally {
       setIsChecking(false);
     }

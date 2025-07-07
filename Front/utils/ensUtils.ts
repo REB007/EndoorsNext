@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import { CONTRACT_ADDRESSES, NETWORK_CONFIG, ENS_CONFIG } from '../lib/contracts';
+import { CONTRACT_ADDRESSES, NETWORK_CONFIG, ENS_CONFIG, SELF_APP_CONFIG } from '../lib/contracts';
 
 // ABI snippets for the contracts
 const L2RegistrarABI = [
@@ -69,7 +69,13 @@ export async function isSubdomainAvailable(subdomain: string): Promise<boolean> 
     return available;
   } catch (error) {
     console.error("Error checking subdomain availability:", error);
-    return false;
+    // For development/testing purposes, return true to allow registration
+    // In production, this should be handled differently
+    if (SELF_APP_CONFIG.devMode) {
+      console.log("Dev mode enabled, returning true for availability despite error");
+      return true;
+    }
+    throw error; // Re-throw the error so the UI can handle it appropriately
   }
 }
 
