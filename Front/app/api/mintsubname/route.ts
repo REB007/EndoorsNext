@@ -151,9 +151,19 @@ export async function POST(request: NextRequest) {
         stack: error.stack
       };
       
+      // Determine which function failed based on the error or stack trace
+      let failedFunction = 'register';
+      if (error.method) {
+        failedFunction = error.method;
+      } else if (error.stack && error.stack.includes('provider.getBlockNumber')) {
+        failedFunction = 'provider.getBlockNumber';
+      } else if (error.stack && error.stack.includes('signer.getAddress')) {
+        failedFunction = 'signer.getAddress';
+      }
+      
       return NextResponse.json(
         { 
-          message: `Blockchain interaction failed: ${errorDetails.message}`,
+          message: `${failedFunction}() failed: ${errorDetails.message}`,
           details: errorDetails
         },
         { status: 500 }
@@ -162,8 +172,24 @@ export async function POST(request: NextRequest) {
   } catch (error: any) {
     console.error('Error registering subdomain:', error);
     
+    // Determine which function failed based on the error or stack trace
+    let failedFunction = 'registerSubdomain';
+    if (error.method) {
+      failedFunction = error.method;
+    } else if (error.stack) {
+      // Extract function name from stack trace if possible
+      const stackLines = error.stack.split('\n');
+      if (stackLines.length > 1) {
+        const firstCallSite = stackLines[1].trim();
+        const functionMatch = firstCallSite.match(/at ([\w\.]+)/);
+        if (functionMatch && functionMatch[1]) {
+          failedFunction = functionMatch[1];
+        }
+      }
+    }
+    
     // Ensure we have a valid error message
-    let errorMessage = 'Failed to register subdomain';
+    let errorMessage = `${failedFunction}() failed`;
     if (error) {
       if (typeof error.message === 'string') {
         errorMessage += `: ${error.message}`;
