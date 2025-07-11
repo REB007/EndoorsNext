@@ -11,11 +11,15 @@ const L2RegistrarABI = [
 
 export async function POST(request: NextRequest) {
   try {
+    console.log('Starting subdomain registration process');
+    
     // Parse request body
     let body;
     try {
       body = await request.json();
+      console.log('Request body parsed:', { name: body.name, address: body.address });
     } catch (error) {
+      console.error('Failed to parse request body:', error);
       return NextResponse.json(
         { message: 'Invalid JSON in request body' },
         { status: 400 }
@@ -26,6 +30,7 @@ export async function POST(request: NextRequest) {
     
     // Validate inputs
     if (!name || !address) {
+      console.error('Missing required fields:', { name, address });
       return NextResponse.json(
         { message: 'Name and address are required' },
         { status: 400 }
@@ -34,6 +39,7 @@ export async function POST(request: NextRequest) {
     
     // Validate name format (alphanumeric and underscores only)
     if (!/^[a-z0-9_]+$/.test(name)) {
+      console.error('Invalid name format:', name);
       return NextResponse.json(
         { message: 'Name can only contain lowercase letters, numbers, and underscores' },
         { status: 400 }
@@ -43,7 +49,9 @@ export async function POST(request: NextRequest) {
     // Check if the subdomain is available
     let available = false;
     try {
+      console.log('Checking subdomain availability for:', name);
       available = await isSubdomainAvailable(name);
+      console.log('Subdomain availability result:', available);
     } catch (error) {
       console.error('Error checking subdomain availability:', error);
       // In development mode, assume it's available
@@ -59,56 +67,98 @@ export async function POST(request: NextRequest) {
     }
     
     if (!available) {
+      console.log('Subdomain is already taken:', name);
       return NextResponse.json(
         { message: 'This subdomain is already taken' },
         { status: 400 }
       );
     }
     
-    // Development mode shortcut - skip blockchain interaction
-    // In development, we'll use mock registration by default unless explicitly disabled
-    if (process.env.NODE_ENV === 'development' && process.env.DISABLE_MOCK_REGISTRATION !== 'true') {
-      console.log('Development mode with MOCK_REGISTRATION: Skipping blockchain interaction');
-      return NextResponse.json({
-        message: 'Subdomain registered successfully (mock)',
-        name,
-        address,
-        transactionHash: '0x' + '0'.repeat(64), // Mock transaction hash
-      });
-    }
+    // No mock registration - we want to identify the real issue
+    console.log('Proceeding with actual blockchain registration');
+    
+    // For debugging only - log environment variables (without exposing private key)
+    console.log('Environment check:', { 
+      NODE_ENV: process.env.NODE_ENV,
+      NEXT_PUBLIC_NETWORK: process.env.NEXT_PUBLIC_NETWORK,
+      HAS_PRIVATE_KEY: !!process.env.PRIVATE_KEY
+    });
     
     // Get contract address
     const l2RegistrarContract = CONTRACT_ADDRESSES.L2_REGISTRAR_CONTRACT;
+    console.log('Using L2 Registrar contract:', l2RegistrarContract);
     
     // Create provider and signer
     const network = process.env.NEXT_PUBLIC_NETWORK || 'testnet';
     const rpcUrl = NETWORK_CONFIG.RPC_URLS[network as keyof typeof NETWORK_CONFIG.RPC_URLS];
-    const provider = new ethers.JsonRpcProvider(rpcUrl);
+    console.log('Connecting to network:', network, 'with RPC URL:', rpcUrl);
     
-    // Use the private key from environment variables
-    if (!process.env.PRIVATE_KEY) {
+    try {
+      const provider = new ethers.JsonRpcProvider(rpcUrl);
+      
+      // Check provider connection
+      const blockNumber = await provider.getBlockNumber();
+      console.log('Successfully connected to provider. Current block number:', blockNumber);
+      
+      // Use the private key from environment variables
+      if (!process.env.PRIVATE_KEY) {
+        console.error('Missing PRIVATE_KEY environment variable');
+        return NextResponse.json(
+          { message: 'Server configuration error: Missing private key' },
+          { status: 500 }
+        );
+      }
+      
+      const signer = new ethers.Wallet(process.env.PRIVATE_KEY as string, provider);
+      const signerAddress = await signer.getAddress();
+      console.log('Signer address:', signerAddress);
+      
+      // Create contract instance
+      const registrar = new ethers.Contract(l2RegistrarContract, L2RegistrarABI, signer);
+      console.log('Contract instance created');
+      
+      // Register the subdomain
+      console.log('Sending transaction to register subdomain:', name, 'for address:', address);
+      const tx = await registrar.register(name, address);
+      console.log('Transaction sent:', tx.hash);
+      
+      const receipt = await tx.wait();
+      console.log('Transaction confirmed in block:', receipt.blockNumber);
+      
+      // Return success response with transaction details
+      return NextResponse.json({
+        message: 'Subdomain registered successfully',
+        name,
+        address,
+        transactionHash: receipt.hash,
+      });
+    } catch (error: any) {
+      console.error('Error during blockchain interaction:', error);
+      
+      // Extract detailed error information
+      const errorDetails = {
+        message: error.message || 'Unknown error',
+        code: error.code,
+        reason: error.reason,
+        method: error.method,
+        transaction: error.transaction ? {
+          from: error.transaction.from,
+          to: error.transaction.to,
+          data: error.transaction.data?.substring(0, 100) + '...',
+          value: error.transaction.value?.toString(),
+          gasLimit: error.transaction.gasLimit?.toString()
+        } : undefined,
+        stack: error.stack
+      };
+      
       return NextResponse.json(
-        { message: 'Server configuration error: Missing private key' },
+        { 
+          message: `Blockchain interaction failed: ${errorDetails.message}`,
+          details: errorDetails
+        },
         { status: 500 }
       );
     }
-    
-    const signer = new ethers.Wallet(process.env.PRIVATE_KEY as string, provider);
-    
-    // Create contract instance
-    const registrar = new ethers.Contract(l2RegistrarContract, L2RegistrarABI, signer);
-    
-    // Register the subdomain
-    const tx = await registrar.register(name, address);
-    const receipt = await tx.wait();
-    
-    // Return success response with transaction details
-    return NextResponse.json({
-      message: 'Subdomain registered successfully',
-      name,
-      address,
-      transactionHash: receipt.hash,
-    });
   } catch (error: any) {
     console.error('Error registering subdomain:', error);
     
@@ -122,8 +172,33 @@ export async function POST(request: NextRequest) {
       }
     }
     
+    // Extract detailed error information
+    const errorDetails = {
+      message: error.message || 'Unknown error',
+      code: error.code,
+      reason: error.reason,
+      method: error.method,
+      transaction: error.transaction ? {
+        from: error.transaction.from,
+        to: error.transaction.to,
+        data: error.transaction.data?.substring(0, 100) + '...',
+        value: error.transaction.value?.toString(),
+        gasLimit: error.transaction.gasLimit?.toString()
+      } : undefined,
+      stack: error.stack,
+      // Include environment information (without sensitive data)
+      environment: {
+        NODE_ENV: process.env.NODE_ENV,
+        NEXT_PUBLIC_NETWORK: process.env.NEXT_PUBLIC_NETWORK,
+        HAS_PRIVATE_KEY: !!process.env.PRIVATE_KEY
+      }
+    };
+    
     return NextResponse.json(
-      { message: errorMessage },
+      { 
+        message: errorMessage,
+        details: errorDetails 
+      },
       { status: 500 }
     );
   }

@@ -15,6 +15,7 @@ export default function RegisterSubdomainPage() {
   const [isAvailable, setIsAvailable] = useState<boolean | null>(null);
   const [isChecking, setIsChecking] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [detailedError, setDetailedError] = useState<string | null>(null);
 
   // Redirect if not logged in
   useEffect(() => {
@@ -70,6 +71,7 @@ export default function RegisterSubdomainPage() {
     
     try {
       setIsLoading(true);
+      setDetailedError(null);
       
       // Call the API route to register the subdomain
       const response = await fetch('/api/mintsubname', {
@@ -85,12 +87,20 @@ export default function RegisterSubdomainPage() {
       
       if (!response.ok) {
         let errorMessage = 'Failed to register subdomain';
+        let detailedErrorInfo = '';
         // Clone the response before reading its body
         const responseClone = response.clone();
         
         try {
           const errorData = await response.json();
           errorMessage = errorData.message || errorMessage;
+          
+          // Capture detailed error information if available
+          if (errorData.details) {
+            detailedErrorInfo = JSON.stringify(errorData.details, null, 2);
+          } else if (errorData.stack) {
+            detailedErrorInfo = errorData.stack;
+          }
         } catch (jsonError) {
           console.error('Error parsing error response as JSON:', jsonError);
           try {
@@ -98,11 +108,17 @@ export default function RegisterSubdomainPage() {
             const textContent = await responseClone.text();
             if (textContent) {
               errorMessage = `Server error: ${textContent.substring(0, 100)}`;
+              detailedErrorInfo = textContent;
             }
           } catch (textError) {
             console.error('Error getting response text:', textError);
           }
         }
+        
+        if (detailedErrorInfo) {
+          setDetailedError(detailedErrorInfo);
+        }
+        
         throw new Error(errorMessage);
       }
       
@@ -119,6 +135,7 @@ export default function RegisterSubdomainPage() {
     } catch (error: any) {
       console.error('Error registering subdomain:', error);
       setError(error.message || 'Failed to register subdomain');
+    } finally {
       setIsLoading(false);
     }
   };
@@ -155,11 +172,24 @@ export default function RegisterSubdomainPage() {
               </div>
               
               {error && (
-                <div className="flex items-center text-red-400 text-sm mb-4 bg-red-400/10 p-2 rounded-lg">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                  </svg>
-                  {error}
+                <div className="flex flex-col text-red-400 text-sm mb-4 bg-red-400/10 p-2 rounded-lg">
+                  <div className="flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                    </svg>
+                    <span className="font-medium">{error}</span>
+                  </div>
+                  
+                  {detailedError && (
+                    <div className="mt-2 border-t border-red-400/20 pt-2">
+                      <details className="text-xs">
+                        <summary className="cursor-pointer font-medium mb-1">Show technical details</summary>
+                        <pre className="whitespace-pre-wrap overflow-auto max-h-48 bg-black/30 p-2 rounded">
+                          {detailedError}
+                        </pre>
+                      </details>
+                    </div>
+                  )}
                 </div>
               )}
               
