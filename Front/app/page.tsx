@@ -19,13 +19,8 @@ export default function HomePage() {
 
     // Trigger vibration on mobile devices
     if (navigator.vibrate) {
-      // Different vibration patterns for each click
-      const vibrationPatterns = [
-        [50], // First click: short vibration
-        [50, 50, 50], // Second click: triple short vibration
-        [100, 50, 100, 50, 200] // Third click: complex pattern
-      ];
-      navigator.vibrate(vibrationPatterns[newClickCount - 1] || [50]);
+      // Same single vibration for all knocks
+      navigator.vibrate([50]); // Short 50ms vibration for all clicks
     }
 
     if (newClickCount === 3) {
