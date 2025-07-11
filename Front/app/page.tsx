@@ -52,7 +52,11 @@ export default function HomePage() {
           }`}
           style={{
             transform: `scale(${getLogoScale()})`,
-            outline: 'none'
+            outline: 'none',
+            WebkitTapHighlightColor: 'transparent',
+            WebkitTouchCallout: 'none',
+            WebkitUserSelect: 'none',
+            userSelect: 'none'
           }}
         >
           <img

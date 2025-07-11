@@ -5,7 +5,7 @@ import { registerSubdomain, isSubdomainAvailable } from '@/utils/ensUtils';
 
 // ABI snippet for the L2Registrar contract
 const L2RegistrarABI = [
-  "function register(string calldata label, address owner) external returns (uint256)",
+  "function register(string calldata label, address owner) external",
   "function available(string calldata label) external view returns (bool)"
 ];
 
@@ -66,7 +66,8 @@ export async function POST(request: NextRequest) {
     }
     
     // Development mode shortcut - skip blockchain interaction
-    if (process.env.NODE_ENV === 'development' && process.env.MOCK_REGISTRATION === 'true') {
+    // In development, we'll use mock registration by default unless explicitly disabled
+    if (process.env.NODE_ENV === 'development' && process.env.DISABLE_MOCK_REGISTRATION !== 'true') {
       console.log('Development mode with MOCK_REGISTRATION: Skipping blockchain interaction');
       return NextResponse.json({
         message: 'Subdomain registered successfully (mock)',
